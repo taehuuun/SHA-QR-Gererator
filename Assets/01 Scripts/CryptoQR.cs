@@ -73,4 +73,30 @@ public class CryptoQR
 
         return resultTex;
     }
+
+    /// <summary>
+    /// 생성된 QR코드를 지정한 경로에 PNG형태로 저장하는 함수
+    /// </summary>
+    /// <param name="qrCode">생성된 QR코드</param>
+    /// <param name="path">저장할 경로</param>
+    /// <param name="fileName">저장할 파일 이름</param>
+    public static void Save(Texture2D qrCode, string path, string fileName)
+    {
+        try
+        {
+            // 저장할 경로 설정
+            string savePath = $"{path}/{fileName}.png";
+            Debug.Log($"Save Path : {savePath}");
+
+            // 바이트 형태로 QR코드를 PNG포맷으로 인코딩
+            byte[] bytes = qrCode.EncodeToPNG();
+
+            // 인코딩한 데이터를 경로에 저장
+            File.WriteAllBytes(savePath,bytes);
+        }
+        catch(System.Exception e)
+        {
+            Debug.Log($"Save Error : {e}");
+        }
+    }
 }
