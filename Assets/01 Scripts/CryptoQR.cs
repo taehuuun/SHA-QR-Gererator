@@ -51,4 +51,26 @@ public class CryptoQR
 
         return writer.Write(data);
     }
+
+    /// <summary>
+    /// 인코딩된 QR데이터를 Texture2D로 반환하는 함수
+    /// </summary>
+    /// <param name="dataStr">QR코드에 들어갈 데이터</param>
+    /// <param name="width">QR코드 너비</param>
+    /// <param name="height">QR코드 높이</param>
+    /// <returns></returns>
+    public static Texture2D CreateQRCode(string dataStr)
+    {
+        // 반환할 텍스쳐
+        var resultTex = new Texture2D(256,256);
+
+        // 인코드한 데이
+        var color = Encode(dataStr,resultTex.width,resultTex.height);
+
+        // 인코드한 데이터를 텍스쳐화
+        resultTex.SetPixels32(color);
+        resultTex.Apply();
+
+        return resultTex;
+    }
 }
