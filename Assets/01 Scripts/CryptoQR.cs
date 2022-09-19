@@ -78,7 +78,7 @@ public class CryptoQR
     /// <param name="qrCode">생성된 QR코드</param>
     /// <param name="path">저장할 경로</param>
     /// <param name="fileName">저장할 파일 이름</param>
-    public static void Save(Texture2D qrCode, string path, string fileName)
+    public static bool Save(Texture2D qrCode, string path, string fileName)
     {
         try
         {
@@ -91,10 +91,12 @@ public class CryptoQR
 
             // 인코딩한 데이터를 경로에 저장
             File.WriteAllBytes(savePath,bytes);
+            return true;
         }
         catch(System.Exception e)
         {
             Debug.Log($"Save Error : {e}");
+            return false;
         }
     }
 }
