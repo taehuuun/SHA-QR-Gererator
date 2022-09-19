@@ -82,9 +82,10 @@ public class CryptoQR
     {
         try
         {
+            // path.Replace("\\\\","\\");
             // 저장할 경로 설정
             DirectoryInfo dirInfo = new DirectoryInfo(path);
-
+            
             if(!dirInfo.Exists)
             {
                 dirInfo.Create();

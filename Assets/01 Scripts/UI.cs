@@ -33,7 +33,7 @@ public class UI : MonoBehaviour
 
     [SerializeField] private List<Texture2D> genQRCodes = new List<Texture2D>();
     [SerializeField] private List<string> shaDatas = new List<string>();
-    [SerializeField] private int curSelIdx = 0;
+    [SerializeField] private int curSelIdx = 1;
 
     private const int MAX_COUNT = 100;
     
@@ -60,6 +60,9 @@ public class UI : MonoBehaviour
         curGenCnt = 0;
         prevBtn.interactable = false;
         nextBtn.interactable = false;
+        saveAllBtn.interactable = false;
+        saveBtn.interactable = false;
+        progressBarImg.fillAmount = 0f;
     }
 
     private void InputActive(bool active)
@@ -75,8 +78,6 @@ public class UI : MonoBehaviour
         type = typeInput.text;
         modelID = modelIDInput.text;
         progressBarImg.fillAmount = 0f;
-        curGenCnt = 1;
-        maxGenCnt = int.Parse(genCountInput.text);
     }
 
     /// <summary>
@@ -97,6 +98,17 @@ public class UI : MonoBehaviour
             return false; 
         }
         return true;
+    }
+
+    private void ChangeSelect()
+    {
+        prevBtn.interactable = curSelIdx > 1;
+        nextBtn.interactable = curSelIdx < genQRCodes.Count;
+
+        qrPreivew.texture = genQRCodes[curSelIdx-1];
+        topFileNameTxt.text = $"{type}.{shaDatas[curSelIdx-1]}";
+        curWorkStateTxt.text = $"{curSelIdx} / {genQRCodes.Count}";
+        progressBarImg.fillAmount = (float)curSelIdx / (float)genQRCodes.Count;
     }
 
     /// <summary>
@@ -120,25 +132,43 @@ public class UI : MonoBehaviour
             shaDatas.Add(sha);
 
             // 진행 상황을 업데이트
-            float percent = (curGenCnt / maxGenCnt) * 100;
-            curWorkStateTxt.text = $"{curGenCnt} / {maxGenCnt} ({percent.ToString("0.##")}";
+            float percent = ((float)curGenCnt / (float)maxGenCnt) * 100;
+            Debug.Log(percent);
+            topFileNameTxt.text = $"{type}.{sha}";
+            curWorkStateTxt.text = $"{curGenCnt} / {maxGenCnt} ({percent.ToString("0.##")}%)";
             progressBarImg.fillAmount = percent * 0.01f;
+
+            if (curGenCnt >= maxGenCnt)
+            {
+                Debug.Log("생성 완료");
+                isActive = false;
+                // Input UI를 활성화 상태로 전환
+                InputActive(isActive);
+
+                // 현재 선택한 QR코드 미리보기 인덱스를 0으로 설정
+                curSelIdx = 1;
+                curGenCnt = 0;
+
+                // 0번째 QR코드를 미리보기 이미지로 변경
+                qrPreivew.texture = genQRCodes[curSelIdx];
+
+                // 생성된 QR코드 리스트의 갯수가 1보다 클경우 다음 선택버튼 활성화.
+                prevBtn.interactable = false;
+                nextBtn.interactable = genQRCodes.Count > 1;
+
+                // 위와 동일 Save버튼에 적용됨.
+                saveBtn.interactable = true;
+                saveAllBtn.interactable = genQRCodes.Count > 1;
+
+                curWorkStateTxt.text = $"{curSelIdx} / {maxGenCnt}";
+                progressBarImg.fillAmount = 1 / (float)maxGenCnt;
+                onOffBtnTxt.text = "Start";
+
+                break;
+            }
 
             yield return new WaitForSeconds(1f);
         }
-
-        // Input UI를 활성화 상태로 전환
-        InputActive(isActive);
-
-        // 현재 선택한 QR코드 미리보기 인덱스를 0으로 설정
-        curSelIdx = 0;
-
-        // 0번째 QR코드를 미리보기 이미지로 변경
-        qrPreivew.texture = genQRCodes[curSelIdx];
-
-        // 생성된 QR코드 리스트의 갯수가 1보다 클경우 다음 선택버튼 활성화.
-        prevBtn.interactable = false;
-        nextBtn.interactable = genQRCodes.Count > 1;
     }
 
     #endregion
@@ -157,8 +187,13 @@ public class UI : MonoBehaviour
 
         if(isActive)
         {
+            genQRCodes.Clear();
+            shaDatas.Clear();
+            curGenCnt = 0;
+
             if(IsUIValidValue())
             {
+
                 SetVariable();
                 StartCoroutine(Gernerate());
             }
@@ -170,30 +205,32 @@ public class UI : MonoBehaviour
         }
     }
 
-    public void QRCodeSelect(int value)
+    public void PrevBtn()
     {
-        if (curSelIdx > 0 && curSelIdx < genQRCodes.Count)
-        {
-            curGenCnt += value;
+        if (curSelIdx > 1)
+            curSelIdx--;
+        
+        ChangeSelect();
+    }
 
-            prevBtn.interactable = curGenCnt > 0;
-            nextBtn.interactable = curGenCnt < genQRCodes.Count;
-        }
-
-        curWorkStateTxt.text = $"{curSelIdx} / {genQRCodes.Count}";
-        progressBarImg.fillAmount = curSelIdx / genQRCodes.Count;
+    public void NextBtn()
+    {
+        if (curSelIdx < genQRCodes.Count)
+            curSelIdx++;
+        
+        ChangeSelect();
     }
 
     public void SaveBtn()
     {
-        CryptoQR.Save(genQRCodes[curGenCnt],pathStr, shaDatas[curGenCnt]);
+        CryptoQR.Save(genQRCodes[curSelIdx],pathStr, $"{type}.{shaDatas[curSelIdx]}");
     }
 
     public void SavelAllBtn()
     {
         for(int i = 0 ; i < maxGenCnt; i++)
         {
-            CryptoQR.Save(genQRCodes[i],pathStr, shaDatas[i]);
+            CryptoQR.Save(genQRCodes[i],pathStr+ @"\" + type, $"{type}.{shaDatas[i]}");
         }
     }
 
