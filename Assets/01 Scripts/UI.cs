@@ -35,7 +35,7 @@ public class UI : MonoBehaviour
     [SerializeField] private List<string> shaDatas = new List<string>();
     [SerializeField] private int curSelIdx = 1;
 
-    private const int MAX_COUNT = 100;
+    private const int MAX_COUNT = 10000;
     
 
     #region Private Func
@@ -167,7 +167,7 @@ public class UI : MonoBehaviour
                 break;
             }
 
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForFixedUpdate();
         }
     }
 
@@ -223,7 +223,7 @@ public class UI : MonoBehaviour
 
     public void SaveBtn()
     {
-        CryptoQR.Save(genQRCodes[curSelIdx],pathStr, $"{type}.{shaDatas[curSelIdx]}");
+        CryptoQR.Save(genQRCodes[curSelIdx],pathStr+ @"\" + type, $"{type}.{shaDatas[curSelIdx]}");
     }
 
     public void SavelAllBtn()
