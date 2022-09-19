@@ -13,7 +13,7 @@ public class CryptoQR
     /// </summary>
     /// <param name="data">암호화할 데이터</param>
     /// <returns></returns>
-    private static string EncryptSHA(string data)
+    public static string EncryptSHA(string data)
     {
         var bytes = Encoding.UTF8.GetBytes(data);
         var hash = new SHA256CryptoServiceProvider().ComputeHash(bytes);
@@ -83,6 +83,13 @@ public class CryptoQR
         try
         {
             // 저장할 경로 설정
+            DirectoryInfo dirInfo = new DirectoryInfo(path);
+
+            if(!dirInfo.Exists)
+            {
+                dirInfo.Create();
+            }
+
             string savePath = $"{path}/{fileName}.png";
             Debug.Log($"Save Path : {savePath}");
 
