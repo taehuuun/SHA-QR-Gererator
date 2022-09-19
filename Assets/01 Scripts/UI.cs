@@ -51,6 +51,11 @@ public class UI : MonoBehaviour
     /// </summary>
     private void Init()
     {
+        topFileNameTxt.text = "";
+        typeInput.text = "";
+        modelIDInput.text = "";
+        genCountInput.text = "";
+
         isActive = false;
         curGenCnt = 0;
         prevBtn.interactable = false;
@@ -80,6 +85,12 @@ public class UI : MonoBehaviour
     /// <returns></returns>
     private bool IsUIValidValue()
     {
+        if(typeInput.text == "" || modelIDInput.text == "" || genCountInput.text =="")
+        {
+            Debug.LogError($"빈값을 입력 하셨습니다.");
+            return false;             
+        }
+
         if(int.Parse(genCountInput.text) > MAX_COUNT)
         {
             Debug.LogError($"생성 가능 최대치는 {MAX_COUNT} 입니다.");
