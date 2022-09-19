@@ -100,12 +100,15 @@ public class UI : MonoBehaviour
             curGenCnt++;
             string sha = CryptoQR.EncryptSHA(type + modelID + curGenCnt.ToString());
             
+            // 생성된 QRCode를 Texture2D형태로 변수 할당 및 미리보기 이미지 변경
             Texture2D newQRCode = CryptoQR.CreateQRCode(sha);
             qrPreivew.texture = newQRCode;
 
+            // 현재 SHA데이터와 QR코드를 리스트에 추가
             genQRCodes.Add(newQRCode);
             shaDatas.Add(sha);
 
+            // 진행 상황을 업데이트
             float percent = (curGenCnt / maxGenCnt) * 100;
             curWorkStateTxt.text = $"{curGenCnt} / {maxGenCnt} ({percent.ToString("0.##")}";
             progressBarImg.fillAmount = percent * 0.01f;
@@ -113,9 +116,17 @@ public class UI : MonoBehaviour
             yield return new WaitForSeconds(1f);
         }
 
+        // Input UI를 활성화 상태로 전환
         InputActive(isActive);
+
+        // 현재 선택한 QR코드 미리보기 인덱스를 0으로 설정
         curSelIdx = 0;
+
+        // 0번째 QR코드를 미리보기 이미지로 변경
         qrPreivew.texture = genQRCodes[curSelIdx];
+
+        // 생성된 QR코드 리스트의 갯수가 1보다 클경우 다음 선택버튼 활성화.
+        prevBtn.interactable = false;
         nextBtn.interactable = genQRCodes.Count > 1;
     }
 
@@ -157,6 +168,9 @@ public class UI : MonoBehaviour
             prevBtn.interactable = curGenCnt > 0;
             nextBtn.interactable = curGenCnt < genQRCodes.Count;
         }
+
+        curWorkStateTxt.text = $"{curSelIdx} / {genQRCodes.Count}";
+        progressBarImg.fillAmount = curSelIdx / genQRCodes.Count;
     }
 
     public void SaveBtn()
