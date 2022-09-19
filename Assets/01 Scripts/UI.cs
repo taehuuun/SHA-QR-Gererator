@@ -21,11 +21,22 @@ public class UI : MonoBehaviour
     [SerializeField] private TMP_Text genCountTxt;
     [SerializeField] private TMP_Text curWorkStateTxt;
 
+    [Header("Variable")]
+    [SerializeField] private bool isActive;
+    [SerializeField] private int curGenCnt;
+    [SerializeField] private int maxGenCnt;
+    [SerializeField] private string type;
+    [SerializeField] private string modelID;
+    [SerializeField] private string curSHAVal;
+    [SerializeField] private string pathStr;
+
     #region Private Func
 
     private void Start()
     {
         // 최초 실행시
+        Init();
+        SetUI();
     }
 
     /// <summary>
@@ -33,6 +44,8 @@ public class UI : MonoBehaviour
     /// </summary>
     private void Init()
     {
+        isActive = false;
+        curGenCnt = 0;
     }
 
     /// <summary>
@@ -40,13 +53,24 @@ public class UI : MonoBehaviour
     /// </summary>
     private void SetUI()
     {
+
+    }
+
+    private void SetVariable()
+    {
+        if(IsUIValidValue())
+        {
+            maxGenCnt = int.Parse(genCountInput.text);
+            type = typeInput.text;
+            modelID = modelIDInput.text;
+        }
     }
 
     /// <summary>
     /// 입력 값이 필요한 UI, 변수값의 유효성을 체크하는 함수
     /// </summary>
     /// <returns></returns>
-    private bool IsValidValue()
+    private bool IsUIValidValue()
     {
         return false;
     }
@@ -69,6 +93,8 @@ public class UI : MonoBehaviour
     /// </summary>
     public void OnOffClick()
     {
+        SetVariable();
+        StartCoroutine(Gernerate());
     }
     #endregion
 }
