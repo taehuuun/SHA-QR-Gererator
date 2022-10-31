@@ -8,7 +8,7 @@
 
 ## 사용방법_Getting Started
 
-아래 절차들을 따라서 해당 생성기를 이용하세요. <br/>
+아래 절차들을 따르세요. <br/>
 [Follow the procedures below to use the generator]
 
 ### 프로젝트 세팅 / Project Setting
